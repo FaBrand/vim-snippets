@@ -93,7 +93,7 @@ public:
 #endif /* $2 */
 endsnippet
 
-snippet interface "Create a fully virtual class header file" b
+snippet interface "Create a abstract class header file" b
 #ifndef ${2:`!v substitute(vim_snippets#Filename('$1_H','ClassName'),'.*','\U&\E','')`}
 #define $2
 
@@ -103,7 +103,7 @@ public:
     virtual ~$1() = default;
 };
 
-#endif  // $2
+#endif /* $2 */
 endsnippet
 
 snippet fnc "Basic c++ doxygen function template" b
@@ -138,7 +138,7 @@ TEST(${1:Foo}, ${2:Bar})
 }
 endsnippet
 
-snippet ftest "Creates a basic gtest test fixture" b
+snippet TEST_F "Creates a basic gtest test fixture" b
 class $1Fixture : public ::testing::Test
 {
   public:
@@ -152,7 +152,7 @@ TEST_F($1Fixture, ${3:Foo})
 }
 endsnippet
 
-snippet ptest "Creates a basic gtest parameterized test fixture" b
+snippet TEST_P "Creates a basic gtest parameterized test fixture" b
 class ${1}Fixture : public ::testing::TestWithParam<$2>
 {
   public:
