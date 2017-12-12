@@ -93,6 +93,18 @@ public:
 #endif /* $2 */
 endsnippet
 
+snippet interface "Create a fully virtual class header file" b
+#ifndef ${2:`!v substitute(vim_snippets#Filename('$1_H','ClassName'),'.*','\U&\E','')`}
+#define $2
+
+class ${1:`!v substitute(substitute(vim_snippets#Filename('$1','ClassName'),'^.','\u&',''), '_\(\w\)', '\u\1', 'g')`}
+{
+public:
+    virtual ~$1() = default;
+};
+
+#endif  // $2
+endsnippet
 
 snippet fnc "Basic c++ doxygen function template" b
 /**
@@ -105,6 +117,54 @@ snippet fnc "Basic c++ doxygen function template" b
 ${1:ReturnType} ${2:FunctionName}(${3:param})
 {
   ${0:FunctionBody}
+}
+endsnippet
+
+###########################################################################
+#                            Snippets for gtest                           #
+###########################################################################
+snippet gtest "Include gtest" b
+#include <gtest/gtest.h>
+endsnippet
+
+snippet gmock "Include gmock" b
+#include <gmock/gmock.h>
+endsnippet
+
+snippet TEST "Creates a basic gtest" b
+TEST(${1:Foo}, ${2:Bar})
+{
+    FAIL();
+}
+endsnippet
+
+snippet ftest "Creates a basic gtest test fixture" b
+class $1Fixture : public ::testing::Test
+{
+  public:
+    virtual void SetUp() override {}
+    virtual void TearDown() override {}
+};
+
+TEST_F($1Fixture, ${3:Foo})
+{
+    ${2:FAIL()};
+}
+endsnippet
+
+snippet ptest "Creates a basic gtest parameterized test fixture" b
+class ${1}Fixture : public ::testing::TestWithParam<$2>
+{
+  public:
+    virtual void SetUp() override {}
+    virtual void TearDown() override {}
+};
+
+INSTANTIATE_TEST_CASE_P(${3:FooTests}, $1Fixture, testing::ValuesIn(std::vector<$2>()));
+
+TEST_P($1Fixture, ${4:Foo})
+{
+    ${5:FAIL()};
 }
 endsnippet
 # vim:ft=snippets:
