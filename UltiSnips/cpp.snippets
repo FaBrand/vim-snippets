@@ -160,7 +160,7 @@ class ${1}Fixture : public ::testing::TestWithParam<$2>
     virtual void TearDown() override {}
 };
 
-INSTANTIATE_TEST_CASE_P(${3:FooTests}, $1Fixture, testing::ValuesIn(std::vector<$2>()));
+INSTANTIATE_TEST_CASE_P(${3:FooTests}, $1Fixture, ::testing::ValuesIn(std::vector<$2>()));
 
 TEST_P($1Fixture, ${4:Foo})
 {
