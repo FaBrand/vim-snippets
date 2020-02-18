@@ -1,0 +1,123 @@
+snippet load "Add a basic load statement" b
+load("$1", "$2")
+endsnippet
+
+
+snippet rule "Add rule boilerplate" b
+def _$1_impl(ctx):
+    ${0:pass}
+
+$1 = rule(
+    implementation = _$1_impl,
+    attrs = {
+        "$2":attr.$3($4),
+    },
+)
+endsnippet
+
+snippet ctx_declare_file  "basic file declaration" b
+${2:out} = ctx.actions.declare_file($1)
+$0
+endsnippet
+
+snippet run "Create a run action"
+ctx.actions.run(
+    inputs = [$1],
+    executable = $2,
+    arguments = [args],
+    outputs = [$3],
+    mnemonic = "$4",
+    progress_message = "$5",
+)
+$0
+endsnippet
+
+snippet run_shell "Create a run_shell action"
+ctx.actions.run_shell(
+    inputs = [$1],
+    command = """
+    $2
+    """,
+    arguments = [args],
+    outputs = [$3],
+    mnemonic = "$4",
+    progress_message = "$5",
+)
+$0
+endsnippet
+
+snippet args "Create an args object" b
+${0:args} = ctx.actions.args()
+endsnippet
+
+snippet skylib "load statement for bazel skylib" b
+load("@bazel_skylib//lib:$1.bzl", "$1")
+$0
+endsnippet
+
+snippet skylib_rule "load statement for bazel skylib rules" b
+load("@bazel_skylib//rules:$1.bzl", "$1")
+$0
+endsnippet
+
+snippet atest "Add boilerplate for a analysistest" b
+load("@bazel_skylib//lib:unittest.bzl", "analysistest", "asserts")
+
+def _$1_test(ctx):
+    env = analysistest.begin(ctx)
+    tut = analysistest.target_under_test(env)
+
+    asserts.false(env, True)
+    $0
+    return analysistest.end(env)
+
+$1_test = analysistest.make(
+    _$1_test,
+    expect_failure = False,
+    attrs = {},
+    config_settings = {},
+)
+
+def _units():
+    pass
+
+def $1_tests():
+    """Instantiate the concrete test targets"""
+    _units()
+
+    $1_test(
+        name = "$1",
+        target_under_test = ":default_version",
+    )
+endsnippet
+
+snippet utest "Adds unittest boilerplate" b
+load("@bazel_skylib//lib:unittest.bzl", "unittest", "asserts")
+
+def _$1_test_impl(ctx):
+    env = unittest.begin(ctx)
+
+    $0
+    return unittest.end(env)
+
+$1_test = unittest.make(
+    _$1_test_impl,
+    attrs = {},
+)
+
+endsnippet
+
+snippet debug "Dump an object" b
+print($1)
+print(dir($1))
+for a in dir($1):
+    print("$1", a, getattr($1, a, None))
+endsnippet
+
+snippet nested_list "Creates a nested list comprehension"
+[${3:item} for ${2:sublist} in ${1:outer} for ${3:item} in ${2:sublist}]
+endsnippet
+
+snippet condition "description"
+	condition = "$1ScalDefault_hash_matching",
+endsnippet
