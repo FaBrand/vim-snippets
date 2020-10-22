@@ -63,8 +63,11 @@ endsnippet
 snippet atest "Add boilerplate for a analysistest" b
 load("@bazel_skylib//lib:unittest.bzl", "analysistest", "asserts")
 
-def _$1_test(ctx):
+def _$1_impl(ctx):
     env = analysistest.begin(ctx)
+    if ctx.attr.should_fail:
+        asserts.expect_failure(env, expected_failure_msg=ctx.attr.error_message)
+        return analysistest.end(env)
     tut = analysistest.target_under_test(env)
 
     asserts.false(env, True)
@@ -72,9 +75,12 @@ def _$1_test(ctx):
     return analysistest.end(env)
 
 $1_test = analysistest.make(
-    _$1_test,
-    expect_failure = False,
-    attrs = {},
+    _$1_impl,
+    expect_failure = True,
+    attrs = {
+        "should_fail": attr.bool(default = False),
+        "error_message": attr.string(),
+    },
     config_settings = {},
 )
 
@@ -107,6 +113,61 @@ $1_test = unittest.make(
 
 endsnippet
 
+snippet function_tests "Description" b
+"""
+This module contains the tests of the $1 function
+"""
+
+load("@bazel_skylib//lib:unittest.bzl", "asserts", "unittest")
+load("//platform/cas/image_creation/details:$2.bzl", "$1")
+load(":macro_wrappers.bzl", "$1_wrapper")
+load(":utils.bzl", "add_failure_test")
+
+def _$1_test_impl(ctx):
+    env = unittest.begin(ctx)
+
+    $1()
+
+    return unittest.end(env)
+
+_$1_test = unittest.make(
+    _$1_test_impl,
+    attrs = {},
+)
+
+def $1_tests():
+    """
+    Setup the tests for the $1 function
+
+    Returns:
+      A list of unittest objects to be integrated in a unittest.suite
+    """
+    unittests = [
+        _$1_test,
+    ]
+
+    add_failure_test(
+        name = "$1_failure_test",
+        target_under_test = $1_wrapper,
+    )
+
+    return unittests
+$0
+endsnippet
+
+snippet wrapper "Description" b
+def _$1_wrapper_impl(ctx):
+    args = ctx.attr.args
+    kwargs = ctx.attr.kwargs
+    $1(*args, **kwargs)
+
+$1_wrapper = rule(
+    implementation = _$1_wrapper_impl,
+    attrs = _COMMON_WRAPPER_ATTRIBUTES,
+)
+$0
+endsnippet
+
 snippet debug "Dump an object" b
 print($1)
 print(dir($1))
@@ -118,6 +179,6 @@ snippet nested_list "Creates a nested list comprehension"
 [${3:item} for ${2:sublist} in ${1:outer} for ${3:item} in ${2:sublist}]
 endsnippet
 
-snippet condition "description"
-	condition = "$1ScalDefault_hash_matching",
+snippet here "Inserts a print('here') statement" b
+print("here$1")$0
 endsnippet
